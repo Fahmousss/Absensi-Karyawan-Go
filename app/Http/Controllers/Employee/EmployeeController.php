@@ -54,7 +54,7 @@ class EmployeeController extends Controller
         if ($request->hasFile('photo')) {
             // Deleting the old image
             if ($employee->photo != 'user.png') {
-                $old_filepath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'employee_photos'.DIRECTORY_SEPARATOR. $employee->photo);
+                $old_filepath = public_path(DIRECTORY_SEPARATOR.'folder_photo'.DIRECTORY_SEPARATOR. $employee->photo);
                 if(file_exists($old_filepath)) {
                     unlink($old_filepath);
                 }    
@@ -72,12 +72,12 @@ class EmployeeController extends Controller
             // add new file name
             $image = $request->file('photo');
             $image_resize = Image::make($image->getRealPath());              
-            $image_resize->resize(300, 300);
-            $image_resize->save(public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.$filename_store));
+            $image_resize->resize(128,128);
+            $image_resize->save(public_path(DIRECTORY_SEPARATOR.'folder_photo'.DIRECTORY_SEPARATOR.$filename_store));
             $employee->photo = $filename_store;
         }
         $employee->save();
         $request->session()->flash('success', 'Profil Anda Berhasil diupdate !');
-        return redirect()->route('employee.profile');
+        return redirect()->route('employee.profile-edit', $employee_id)->with('employee',Auth::user()->employee);
     }
 }

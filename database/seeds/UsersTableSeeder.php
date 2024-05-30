@@ -1,12 +1,15 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Attendance;
 use App\Department;
-use \DateTime as DateTime;
+use App\Employee;
 use App\Role;
 use App\User;
-use App\Employee;
 use Carbon\Carbon;
+use DateTime;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -29,15 +32,15 @@ class UsersTableSeeder extends Seeder
         $adminRole =  Role::where('name', 'admin')->first();
 
         $admin = User::create([
-            'name' => 'Admin User',
+            'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin')
         ]);
 
         $employee = User::create([
-            'name' => 'Akashdeep Nandi',
-            'email' => 'akash@gmail.com',
-            'password' => Hash::make('akash')
+            'name' => 'User',
+            'email' => 'user@gmail.com',
+            'password' => Hash::make('user')
         ]);
 
         // 
@@ -47,14 +50,14 @@ class UsersTableSeeder extends Seeder
         $admin->roles()->attach($adminRole);
         $employee = Employee::create([
             'user_id' => $employee->id,
-            'first_name' => 'Akashdeep',
-            'last_name' => 'Nandi',
+            'first_name' => 'Lorem',
+            'last_name' => 'Ipsum',
             'dob' => $dob->format('Y-m-d'),
             'sex' => 'Male',
             'desg' => 'Manager',
             'department_id' => '1',
             'join_date' => $join->format('Y-m-d'),
-            'salary' => 10520.75
+            'salary' => 200000
         ]);
 
         Department::create(['name' => 'Marketing']);

@@ -28,16 +28,7 @@ class AttendanceController extends Controller
     public function location(Request $request) {
         
         $response = Http::get('https://nominatim.openstreetmap.org/reverse?format=geojson&lat='.$request->lat.'&lon='.$request->lon);
-        // dd();
-        // $result = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' . $request->lat . ',' . $request->lon . '&key=AIzaSyC_spXZlR87VF9qq073nAhFGZ-f3K6enqk';
-        // $file_contents = file_get_contents($result);
-
-        // $json_decode = json_decode($file_contents);
-        // echo  $json_decode->results[0]->formatted_address;
-        // $response = array(
-        //     'status' => 'success',
-        //     'result' => $json_decode
-        // );
+        
         return $response->json()['features'][0]['properties']['display_name'];
     }
 
@@ -59,20 +50,21 @@ class AttendanceController extends Controller
         }
         return view('employee.attendance.create')->with($data);   
     }
+    
 
     // Simpan data record absensi
     public function store(Request $request, $employee_id) {
         $attendance = new Attendance([
             'employee_id' => $employee_id,
             'entry_ip' => $request->ip(),
-            'time' => date('h'),
-            'entry_location' => $request->entry_location
+            'time' => date('H'),
+            'entry_location' => $request->entry_location,
         ]);
         $attendance->save();
-        if(date('h')<=9) {
+        if(date('H')<=9) {
          $request->session()->flash('success', 'Absensi Anda berhasil direkam sistem');
          } else {
-            $request->session()->flash('success', ' Absensi Anda berhasil direkam sistem dengan catatan keterlambatan');
+            $request->session()->flash('warning', ' Absensi Anda berhasil direkam sistem dengan catatan keterlambatan');
          }
         return redirect()->route('employee.attendance.create')->with('employee', Auth::user()->employee);
     }
@@ -84,6 +76,7 @@ class AttendanceController extends Controller
         $attendance->exit_location = $request->exit_location;
         $attendance->registered = 'yes';
         $attendance->save();
+        
         $request->session()->flash('success', 'Absensi Anda berhasil diakhiri');
         return redirect()->route('employee.attendance.create')->with('employee', Auth::user()->employee);
     }

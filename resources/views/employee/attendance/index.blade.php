@@ -1,203 +1,252 @@
-@extends('layouts.app')        
+@extends('layouts.app')
+
+@section('title', 'Riwayat Absensi')
 
 @section('content')
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Daftar Absensi</h1>
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('employee.index') }}">Dashboard Karyawan</a>
-                        </li>
-                        <li class="breadcrumb-item active">
-                            Daftar Absensi
-                        </li>
-                    </ol>
-                </div>
-                <!-- /.col -->
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3 mx-auto">
-                    <div class="card">
-                        <div class="card-header">
-                                <h5 class="text-center text-primary" style="text-align: center !important">Cari Absensi dengan rentang tanggal</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-8 mx-auto text-center">
-                                    <form action="{{ route('employee.attendance.index') }}" method="POST">
-                                        @csrf
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label for="">Rentang Tanggal</label>
-                                                <input type="text" name="date_range" placeholder="Start Date" class="form-control text-center"
-                                                id="date_range"
-                                                >
-                                                @error('date_range')
-                                                <div class="ml-2 text-danger">
-                                                    {{ $message }}
-                                                </div>
-                                                @enderror
-                                            </div>
-                                        </fieldset>
-                                        
-                                            <input type="submit" name="" class="btn btn-primary" value="Submit">
-                                        </div>
-                                        
-                                    </form>
-                                </div>
-                            </div>
-                            {{-- <div class="container">
-                                <form action="{{ route('employee.attendance.index') }}" class="row" method="POST">
-                                    @csrf
-                                    <div class="col-sm-9 mb-2">
-
-                                        <div class="input-group">
-                                            <input type="text" name="date_range" placeholder="Start Date" class="form-control"
-                                            id="date_range"
-                                            >
-                                        </div>
-                                        @error('date_range')
-                                        <div class="ml-2 text-danger">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-sm-3 mb-2">
-                                        <div class="input-group">
-                                            <input type="submit" name="" class="btn btn-primary" value="Submit">
-                                        </div>
-                                    </div>
-                                    
-                                </form>
-                            </div> --}}
-                        </div>
-                    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Riwayat Absensi</h4>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-lg mx-auto">
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <div class="card-title text-center">
-                                Absensi
-                                @if ($filter)
-                                    dari rentang
-                                @endif
-                            </div>
-                            
-                        </div>
-                        <div class="card-body">
-                            @if ($attendances->count())
-                            <table class="table table-bordered table-hover" id="dataTable">
+                <div class="card-body ">
+                    <div class="table-responsive ">
+                        @include('messages.alerts')
+
+                        @if ($attendances->count())
+                            <table class="table table-hover " style="min-width: 845px">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Tanggal</th>
-                                        <th>Status</th>
-                                        <th>Waktu Absensi</th>
-                                        <th>Lokasi Absensi</th>
-                                        <th>Waktu Selesai</th>
-                                        <th>Lokasi Selesai</th>
+                                        <th class="text-start">#
+                                        </th>
+                                        <th class="">
+                                            Tanggal</th>
+                                        <th class="text-center">
+                                            Status</th>
+                                        <th class="text-center">
+                                            Waktu Absensi</th>
+                                        <th class="text-center">
+                                            Lokasi Absensi</th>
+                                        <th class="text-center">
+                                            Waktu Selesai</th>
+                                        <th class="text-center">
+                                            Lokasi Selesai</th>
+                                        <th class="text-end"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($attendances as $index => $attendance)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        @if ($attendance->registered == 'yes')
-                                        <td>{{ $attendance->created_at->format('d-m-Y') }}</td>
-                                        <td><h5 class="text-center"><span class="badge badge-pill badge-success">Hadir</span> </h5></td>
-                                        <td>{{ $attendance->created_at->format('H:i:s') }}</td>
-                                        <td>{{ $attendance->entry_location }}</td>
-                                        <td>{{ $attendance->updated_at->format('H:i:s') }}</td>
-                                        <td>{{ $attendance->exit_location }}</td>
-                                        @elseif($attendance->registered == 'no')
-                                        <td>{{ $attendance->created_at->format('d-m-Y') }}</td>
-                                        <td><h5 class="text-center"><span class="badge badge-pill badge-danger">Absen</span> </h5></td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        @elseif($attendance->registered == 'sun')
-                                        <td>{{ $attendance->created_at->format('d-m-Y') }}</td>
-                                        <td><h5 class="text-center"><span class="badge badge-pill badge-info">Minggu</span> </h5></td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        @elseif($attendance->registered == 'leave')
-                                        <td>{{ $attendance->created_at->format('d-m-Y') }}</td>
-                                        <td><h5 class="text-center"><span class="badge badge-pill badge-info">Leave</span> </h5></td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        @elseif($attendance->registered == 'holiday')
-                                        <td>{{ $attendance->created_at->format('d-m-Y') }}</td>
-                                        <td><h5 class="text-center"><span class="badge badge-pill badge-success">Hari Libur</span> </h5></td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        <td class="text-center">Belum Ada Riwayat</td>
-                                        @else
-                                        <td>{{ $attendance->created_at->format('d-m-Y') }}</td>
-                                        <td><h5 class="text-center"><span class="badge badge-pill badge-warning">Setengah Jam Kerja</span> </h5></td>
-                                        <td>{{ $attendance->created_at->format('H:i:s') }}</td>
-                                        <td>{{ $attendance->entry_location }}</td>
-                                        <td> - </td>
-                                        <td> - </td>
-                                        @endif
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                            @else
-                            <div class="alert alert-info text-center" style="width:50%; margin: 0 auto">
-                                <h4>Data Tidak Ada</h4>
-                            </div>
-                            @endif
-                            
-                        </div>
+                                    @foreach ($attendances as $index => $attendance)
+                                        <tr>
+                                            <td>
+                                                {{ $index + 1 }}
+
                     </div>
-                    <!-- general form elements -->
-                    
+                    </td>
+                    @if ($attendance->registered == 'yes')
+                        <td>
+
+                            {{ $attendance->created_at->format('d-m-Y') }}
+
+                        </td>
+                        @if ($attendance->created_at->format('H:i:s') >= '09:00:00')
+                            <td>
+                                <span class="badge badge-warning">Terlambat</span>
+                            </td>
+                            
+                        @elseif($attendance->created_at->format('H:i:s') <= '09:00:00' && $attendance->updated_at->format('H:i:s') >= '18:00:00')
+                            <td>
+                                <span class="badge badge-success">Lembur</span>
+                            </td>
+                            @else
+                        <td>
+
+                            <span class="badge badge-success">Hadir</span>
+
+                        </td>
+                        @endif
+                        <td class="align-middle text-center">
+
+
+                            {{ $attendance->created_at->format('H:i:s') }}
+
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            {{ $attendance->entry_location }}
+
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            {{ $attendance->updated_at->format('H:i:s') }}
+
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            {{ $attendance->exit_location }}
+
+                        </td>
+                        <td class="align-middle">
+
+                        </td>
+                    @elseif($attendance->registered == 'no')
+                        <td>
+                            {{ $attendance->created_at->format('d-m-Y') }}
+                        </td>
+                        <td>
+
+                            <span class="badge badge-danger">Tidak Hadir</span>
+
+                        </td>
+                        <td class="align-middle text-center">
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+
+                        <td class="align-middle">
+
+                        </td>
+                    @elseif($attendance->registered == 'minggu' || $attendance->registered == 'hari libur')
+                        <td>
+
+                            {{ $attendance->created_at->format('d-m-Y') }}
+
+                        </td>
+                        <td>
+
+                            <span class="badge badge-info">Libur</span>
+
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+
+                        <td class="align-middle">
+
+                        </td>
+                    @elseif($attendance->registered == 'leave')
+                        <td>
+
+                            {{ $attendance->created_at->format('d-m-Y') }}
+
+                        </td>
+                        <td>
+
+                            <span class="badge badge-info">Cuti</span>
+
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            Belum ada riwayat
+                            </p>
+                        </td>
+                    @else
+                        <td>
+
+
+
+
+                            {{ $attendance->created_at->format('d-m-Y') }}
+
+                        </td>
+                        <td>
+
+                            <span class="badge badge-warning">Setengah jam
+                                kerja</span>
+
+                        </td>
+                        <td class="align-middle text-center">
+
+
+
+                            {{ $attendance->created_at->format('H:i:s') }}
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+
+
+                            {{ $attendance->entry_location }}
+                            </p>
+                        </td>
+                        <td class="align-middle text-center">
+                            -
+                        </td>
+                        <td class="align-middle text-center">
+                            -
+                        </td>
+                        <td class="align-middle">
+
+                        </td>
+                    @endif
+                    </tr>
+                    @endforeach
+                    </tbody>
+                    </table>
+                @else
+                    <div class="alert alert-light solid"><strong>Ups!</strong> Data Karyawan kosong
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
-        <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+    </div>
+    </div>
+    </div>
 
-@endsection
-@section('extra-js')
 
-<script>
-    $(document).ready(function() {
-        $('#dataTable').DataTable({
-            responsive:true,
-            autoWidth: false,
-        });
-        $('#date_range').daterangepicker({
-            "maxDate": new Date(),
-            "locale": {
-                "format": "DD-MM-YYYY",
-            }
-        })
-    });
-</script>
 @endsection

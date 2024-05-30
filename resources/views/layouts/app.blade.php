@@ -1,144 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="csrf-token" content="{{ Session::token() }}"> 
-        <title>Web Absensi | Dashboard</title>
-        {{-- favicon --}}
-        <link rel="icon" href="/img/partner.png">
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <!-- Font Awesome -->
-        <link
-            rel="stylesheet"
-            href="/plugins/fontawesome-free/css/all.min.css"
-        />
-        <!-- Ionicons -->
-        <link
-            rel="stylesheet"
-            href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"
-        />
-        {{-- Font awesome 4.7 --}}
-        <link rel="stylesheet" href="/dist/css/font-awesome.min.css">
-        <!-- Tempusdominus Bbootstrap 4 -->
-        
-        <!-- Theme style -->
-        <link rel="stylesheet" href="/dist/css/adminlte.min.css" />
-        <!-- overlayScrollbars -->
-        <link
-            rel="stylesheet"
-            href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css"
-        />
-        
-        <!-- summernote -->
-        <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.css" />
-        <!-- Google Font: Source Sans Pro -->
-        <link
-            href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
-            rel="stylesheet"
-        />
-    <!-- DataTables -->
-    <link
-    rel="stylesheet"
-    href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css"
-    />
-    <link
-    rel="stylesheet"
-    href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css"
-    />
-    <!-- daterange picker -->
-    <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
-    {{-- <link rel="stylesheet" href="/css/daterangepicker.css"> --}}
-    <style>
-        .hide-input {
-            display: none;
-        }
-        .proftable tr td:first-child {
-            font-weight: bold;
-            color: rgb(11, 72, 138);
-        }
-    </style>
-    </head>
-        @guest
+<html lang="en" class="h-100">
 
-        <body class="hold-transition login-page">
-            {{-- If user is not logged in --}}
-            @yield('content')
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="csrf-token" content="{{ Session::token() }}">
 
-        @else
-        @if (Route::currentRouteName() == 'password.request' || Route::currentRouteName() == 'password.reset' || Route::currentRouteName() == 'password.confirm')
-        <body class="hold-transition login-page">
-            {{-- If user is not logged in --}}
-            @yield('content')
-        @else
-        <body class="hold-transition sidebar-mini layout-fixed">
+    <title>@yield('title') - Sistem Manajemen Absensi CVGO </title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('/images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ asset('/vendor/owl-carousel/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/vendor/owl-carousel/css/owl.theme.default.min.css') }}">
+    <link href="{{ asset('/vendor/jqvmap/css/jqvmap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/style.css') }}" rel="stylesheet">
+    <!-- Datetable -->
+    <link href="{{ asset('/vendor/datatables/css/jquery.dataTables.min.css') }}" rel="stylesheet">
+    {{-- Daterange Picker --}}
+    <link href="{{ asset('/vendor/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
+   
+    @yield('extra-css')
 
-            <div class="wrapper">
-                {{-- navbar include --}}
-                @include('includes.navbar')
-                @include('includes.main_sidebar')
-                <!-- Content Wrapper. Contains page content -->
-                <div class="content-wrapper">
+</head>
+
+@guest
+
+    <body class="hold-transition login-page h-100">
+        @yield('content')
+    @else
+        @if (Route::currentRouteName() == 'password.request' ||
+                Route::currentRouteName() == 'password.reset' ||
+                Route::currentRouteName() == 'password.confirm')
+
+            <body class="hold-transition login-page h-100">
                 @yield('content')
-                </div>
-                <footer class="main-footer">
-                    <strong
-                        >Dibuat Dadakan &copy; 8-10 Desember 2021, oleh
-                        <a href="https://linkedin.com/in/firyanul-rizky-1593b5139/">Firyanul Rizky</a>.</strong
-                    >
-                    Maaf jika masih banyak kekurangan.
-                    <div class="float-right d-none d-sm-inline-block">
-                        <b>Versi</b> 1.0.0
-                    </div>
-                </footer>
-                <!-- Control Sidebar -->
-                <aside class="control-sidebar control-sidebar-dark">
-                    <!-- Control sidebar content goes here -->
-                </aside>
-                <!-- /.control-sidebar -->
-            </div>
-            <!-- ./wrapper -->
-        @endif
-        
-        @endguest
-        
+            @else
 
-        <!-- jQuery -->
-        <script src="/plugins/jquery/jquery.min.js"></script>
-        <!-- jQuery UI 1.11.4 -->
-        <script src="/plugins/jquery-ui/jquery-ui.min.js"></script>
-        <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-        <script>
-            $.widget.bridge("uibutton", $.ui.button);
-        </script>
-        <!-- Bootstrap 4 -->
-        <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-        
-        <!-- Summernote -->
-        <script src="/plugins/summernote/summernote-bs4.min.js"></script>
-        <!-- overlayScrollbars -->
-        <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-        <!-- AdminLTE App -->
-        <script src="/dist/js/adminlte.js"></script>
-        <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-        {{-- <script src="/dist/js/pages/dashboard.js"></script> --}}
-        {{-- font awesome --}}
-        {{-- <script src="https://use.fontawesome.com/2d4c4e3d51.js"></script> --}}
-        <!-- AdminLTE for demo purposes -->
-        <script src="/dist/js/demo.js"></script>
-        <!-- DataTables -->
-        <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-        <script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-        <script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-        <!-- InputMask -->
-        <script src="/plugins/moment/moment.min.js"></script>
-        <script src="/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
-        <!-- date-range-picker -->
-        <script src="/plugins/daterangepicker/daterangepicker.js"></script>
-        {{-- <script src="/js/daterangepicker.js"></script> --}}
-        {{-- <script src="/js/moment.min.js"></script> --}}
-        @yield('extra-js')
-    </body>
+                <body>
+
+                    <!--*******************
+                            Preloader start
+                        ********************-->
+                    <div id="preloader">
+                        <div class="sk-three-bounce">
+                            <div class="sk-child sk-bounce1"></div>
+                            <div class="sk-child sk-bounce2"></div>
+                            <div class="sk-child sk-bounce3"></div>
+                        </div>
+                    </div>
+                    <!--*******************
+                            Preloader end
+                        ********************-->
+
+
+                    <!--**********************************
+                            Main wrapper start
+                        ***********************************-->
+                    <div id="main-wrapper">
+
+                        <!--**********************************
+                                Nav header start
+                            ***********************************-->
+                        <div class="nav-header">
+                            <a href="javascript:void(0)" class="brand-logo">
+                                <img class="brand-title" src="{{ asset('/images/logo-grey.png') }}" alt="">
+                            </a>
+
+                            <div class="nav-control">
+                                <div class="hamburger">
+                                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                                </div>
+                            </div>
+                        </div>
+                        @include('includes.navbar')
+                        <!--**********************************
+                                Nav header end
+                            ***********************************-->
+
+
+                        <!--**********************************
+                                Sidebar start
+                            ***********************************-->
+                        @include('includes.main_sidebar')
+                        <!--**********************************
+                                Sidebar end
+                            ***********************************-->
+
+                        <!--**********************************
+                                Content body start
+                            ***********************************-->
+                        <div class="content-body">
+                            <!-- row -->
+                            <div class="container-fluid">
+                                @yield('content')
+                            </div>
+                        </div>
+                        <!--**********************************
+                                Content body end
+                            ***********************************-->
+
+
+                        <!--**********************************
+                                Footer start
+                            ***********************************-->
+                        <div class="footer">
+                            <div class="copyright">
+                                <p>Copyright © Designed &amp; Developed by *</p>
+                            </div>
+                        </div>
+                        <!--**********************************
+                                Footer end
+                            ***********************************-->
+
+                        <!--**********************************
+                               Support ticket button start
+                            ***********************************-->
+
+                        <!--**********************************
+                               Support ticket button end
+                            ***********************************-->
+                    </div>
+        @endif
+    @endguest
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+    <script src="{{ asset('/vendor/global/global.min.js') }}"></script>
+    <script src="{{ asset('/js/quixnav-init.js') }}"></script>
+    <script src="{{ asset('/js/custom.min.js') }}"></script>
+
+
+    <!-- Vectormap -->
+    <script src="{{ asset('/vendor/raphael/raphael.min.js') }}"></script>
+    <script src="{{ asset('/vendor/morris/morris.min.js') }}"></script>
+
+
+    <script src="{{ asset('/vendor/circle-progress/circle-progress.min.js') }}"></script>
+    <script src="{{ asset('/vendor/chart.js/Chart.bundle.min.js') }}"></script>
+
+    <script src="{{ asset('/vendor/gaugeJS/dist/gauge.min.js') }}"></script>
+
+    <!--  flot-chart js -->
+    <script src="{{ asset('/vendor/flot/jquery.flot.js') }}"></script>
+    <script src="{{ asset('/vendor/flot/jquery.flot.resize.js') }}"></script>
+
+    <!-- Owl Carousel -->
+    <script src="{{ asset('/vendor/owl-carousel/js/owl.carousel.min.js') }}"></script>
+
+    <!-- Counter Up -->
+    <script src="{{ asset('/vendor/jqvmap/js/jquery.vmap.min.js') }}"></script>
+    <script src="{{ asset('/vendor/jqvmap/js/jquery.vmap.usa.js') }}"></script>
+    <script src="{{ asset('/vendor/jquery.counterup/jquery.counterup.min.js') }}"></script>
+
+
+    <script src="{{ asset('/js/dashboard/dashboard-1.js') }}"></script>
+    <!-- Daterange Picker -->
+    <script src="{{ asset('/vendor/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('/vendor/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('/js/plugins-init/bs-daterange-picker-init.js') }}"></script>
+
+    {{-- Data Table --}}
+    <script src="{{ asset('/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('/js/plugins-init/datatables.init.js') }}"></script>
+
+   
+   
+    @yield('extra-js')
+</body>
+
 </html>

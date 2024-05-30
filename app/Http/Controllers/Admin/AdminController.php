@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Employee;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
@@ -11,7 +12,11 @@ use Illuminate\Support\Facades\Hash;
 class AdminController extends Controller
 {
     public function index() {
-        return view('admin.index');
+        $data = [
+
+            'employees' => Employee::all()
+        ];
+        return view('admin.index')->with($data);
     }
 
     public function reset_password() {

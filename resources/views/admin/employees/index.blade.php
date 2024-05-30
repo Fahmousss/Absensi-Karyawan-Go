@@ -1,137 +1,117 @@
-@extends('layouts.app')        
+@extends('layouts.app')
+
+@section('title', 'Daftar Karyawan')
 
 @section('content')
-    <!-- Content Header (Page header) -->
-<div class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1 class="m-0 text-dark">Daftar Karyawan</h1>
+    <div class="row page-titles mx-0">
+        <div class="col-sm-6 p-md-0">
+            <div class="welcome-text">
+                <h4>Daftar Karyawan</h4>
+                {{-- <p class="mb-0">Your business dashboard template</p> --}}
             </div>
-            <!-- /.col -->
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('admin.index') }}">Dashboard Admin</a>
-                    </li>
-                    <li class="breadcrumb-item active">
-                        Daftar Karyawan
-                    </li>
-                </ol>
-            </div>
-            <!-- /.col -->
         </div>
-        <!-- /.row -->
+        <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('admin.employees.index') }}">Karyawan</a></li>
+                <li class="breadcrumb-item active"><a href="javascript:void(0)">Daftar Karyawan</a></li>
+            </ol>
+        </div>
     </div>
-    <!-- /.container-fluid -->
-</div>
-<!-- /.content-header -->
-
-    <!-- Main content -->
-<section class="content">
-    <div class="container-fluid">
-        @include('messages.alerts')
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <div class="card-title text-center">
-                            Karyawan
-                        </div>
-                        
-                    </div>
-                    <div class="card-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">List Karyawan</h4>
+                    <a href="{{ route('admin.employees.create') }}" class="btn btn-primary btn-sm">
+                        Add<span class="btn-icon-right pl-2"><i
+                            class="fa fa-plus"></i></span> </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        @include('messages.alerts')
                         @if ($employees->count())
-                        <table class="table table-bordered table-hover" id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nama</th>
-                                    <th>Department</th>
-                                    <th>Jabatan</th>
-                                    <th>Tanggal Bergabung</th>
-                                    <th>Gaji</th>
-                                    <th class="none">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($employees as $index => $employee)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $employee->first_name.' '.$employee->last_name }}</td>
-                                    <td>{{ $employee->department->name }}</td>
-                                    <td>{{ $employee->desg }}</td>
-                                    <td>{{ $employee->join_date->format('d M, Y') }}</td>
-                                    <td>{{ $employee->salary }}</td>
-                                    <td>
-                                        <a href="{{ route('admin.employees.profile', $employee->id) }}" class="btn btn-flat btn-info">Lihat Profil</a>
-                                        <button 
-                                        class="btn btn-flat btn-danger"
-                                        data-toggle="modal" 
-                                        data-target="#deleteModalCenter{{ $index + 1 }}"
-                                        >Hapus Karyawan</button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                            @for ($i = 1; $i < $employees->count()+1; $i++)
-                                <!-- Modal -->
-                                <div class="modal fade" id="deleteModalCenter{{ $i }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalCenterTitle1{{ $i }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                            <table id="example" class="table items-center" style="min-width: 845px">
+                                <thead>
+                                    <tr>
+                                        <th class="text-start">Karyawan</th>
+                                        <th class="text-center">Jabatan</th>
+                                        <th class="text-center">Departemen</th>
+                                        <th class="text-center">Employed</th>
+                                        <th class="text-end"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($employees as $index => $employee)
+                                        <tr>
+                                            <td class="text-start">
+
+                                                {{ $employee->first_name . ' ' . $employee->last_name }}
+
+                                            </td>
+                                            <td class="text-center">
+                                                {{ $employee->desg }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ $employee->department->name }}
+                                            </td>
+                                            <td class="text-center">
+                                                <span>{{ $employee->join_date->format('d M, Y') }}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="{{ route('admin.employees.profile', $employee->id) }}"
+                                                    class="mr-4" title="Lihat"><i class="ti ti-eye color-muted"></i>
+                                                </a>
+                                                <a href="javascript:void()" data-toggle="modal"
+                                                    data-target="#exampleModalCenter{{ $index + 1 }}" title="Hapus"><i
+                                                        class="fa fa-close color-danger"></i></a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            @for ($i = 1; $i < $employees->count() + 1; $i++)
+                                {{-- Modal --}}
+                                <div class="modal fade" id="exampleModalCenter{{ $i }}">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
                                         <div class="modal-content">
-                                            <div class="card card-danger">
-                                                <div class="card-header">
-                                                    <h5 style="text-align: center !important">Yakin ingin dihapus?</h5>
-                                                </div>
-                                                <div class="card-body text-center d-flex" style="justify-content: center">
-                                                    
-                                                    <button type="button" class="btn flat btn-secondary" data-dismiss="modal">Tidak</button>
-                                                    
-                                                    <form 
-                                                    action="{{ route('admin.employees.delete', $employees->get($i-1)->id) }}"
-                                                    method="POST"
-                                                    >
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Delete Confirm</h5>
+                                                <button type="button" class="close"
+                                                    data-dismiss="modal"><span>&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Anda yakin ingin menghapus data ini?
+                                                    <span class="text-danger">Data yang dihapus tidak dapat
+                                                        dikembalikan</span>
+                                                </p>
+                                            </div>
+                                            <div class="modal-footer">
+
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <form
+                                                    action="{{ route('admin.employees.delete', $employees->get($i - 1)->id) }}"
+                                                    method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                        <button type="submit" class="btn flat btn-danger ml-1">Ya</button>
-                                                    </form>
-                                                </div>
-                                                <div class="card-footer text-center">
-                                                    <small>Aksi ini tidak bisa dilakukan</small>
-                                                </div>
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- /.modal -->
                             @endfor
                         @else
-                        <div class="alert alert-info text-center" style="width:50%; margin: 0 auto">
-                            <h4>Tidak Ada Data</h4>
-                        </div>
+                            <div class="alert alert-light solid"><strong>Ups!</strong> Data Karyawan kosong
+                            </div>
                         @endif
-                        
                     </div>
+
                 </div>
-                <!-- general form elements -->
-                
             </div>
         </div>
     </div>
-    <!-- /.container-fluid -->
-</section>
-    <!-- /.content -->
 
-@endsection
-@section('extra-js')
 
-<script>
-    $(document).ready(function() {
-        $('#dataTable').DataTable({
-            responsive:true,
-            autoWidth: false,
-        });
-    });
-</script>
 @endsection

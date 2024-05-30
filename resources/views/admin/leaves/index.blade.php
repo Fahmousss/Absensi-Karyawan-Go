@@ -1,185 +1,181 @@
-@extends('layouts.app')        
+@extends('layouts.app')
+
+@section('title', 'Daftar Cuti Karyawan')
 
 @section('content')
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Daftar Cuti Karyawan</h1>
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('admin.index') }}">Dashboard Admin</a>
-                        </li>
-                        <li class="breadcrumb-item active">
-                            Daftar Cuti Karyawan
-                        </li>
-                    </ol>
-                </div>
-                <!-- /.col -->
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-8 col-md-10 mx-auto">
-                    <!-- general form elements -->
-                    @include('messages.alerts')
-                    @error('status')
-                        <div class="alert alert-danger">
-                            Pilih Opsi Valid
-                        </div>
-                    @enderror
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">Daftar Cuti</h3>
-                        </div>
-                        <div class="card-body">
-                            @if ($leaves->count())
-                            <table class="table table-hover" id="dataTable">
+    <div class="row page-titles mx-0">
+        <div class="col-sm-6 p-md-0">
+            <div class="welcome-text">
+                <h4>Daftar Cuti Karyawan</h4>
+                {{-- <p class="mb-0">Your business dashboard template</p> --}}
+            </div>
+        </div>
+        <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('admin.leaves.index') }}">Cuti</a></li>
+                <li class="breadcrumb-item active"><a href="javascript:void(0)">Daftar Cuti Karyawan</a></li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        @include('messages.alerts')
+                        @if ($leaves->count())
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Tanggal Pengajuan</th>
-                                        <th>Nama</th>
-                                        <th>Department</th>
-                                        <th>Jabatan</th>
-                                        <th>Alasan</th>
-                                        <th>Status</th>
-                                        <th class="none">Setengah Jam Kerja</th>
-                                        <th class="none">Tanggal Awal</th>
-                                        <th class="none">Tanggal Akhir</th>
-                                        <th class="none">Deskripsi</th>
-                                        <td class="none">Aksi</td>
+                                        <th class="">
+                                            #</th>
+                                        <th class="">
+                                            Tanggal Ajuan</th>
+                                        <th class="">
+                                            Nama</th>
+                                        <th class="text-center ">
+                                            Alasan</th>
+                                        <th class="text-center ">
+                                            Status</th>
+                                        <th class="text-center ">
+                                            Setengah Jam Kerja</th>
+                                        <th class="text-center ">
+                                            Awal Cuti</th>
+                                        <th class="text-center ">
+                                            Akhir Cuti</th>
+                                        <th class="text-center ">
+                                            Deskripsi</th>
+                                        <th class=""></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($leaves as $index => $leave)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $leave->created_at->format('d-m-Y') }}</td>
-                                        <td>{{ $leave->employee->first_name.' '.$leave->employee->last_name }}</td>
-                                        <td>{{ $leave->employee->department }}</td>
-                                        <td>{{ $leave->employee->desg }}</td>
-                                        <td>{{ $leave->reason }}</td>
-                                        <td>
-                                            <h5>
-                                                <span 
-                                                @if ($leave->status == 'pending')
-                                                    class="badge badge-pill badge-warning"
-                                                @elseif($leave->status == 'declined')
-                                                    class="badge badge-pill badge-danger"
-                                                @elseif($leave->status == 'approved')
-                                                    class="badge badge-pill badge-success"
-                                                @endif
-                                                >
+                                        <tr>
+                                            <td>
+
+                                                {{ $index + 1 }}
+
+                                            </td>
+                                            <td>
+
+                                                {{ $leave->created_at->format('d-m-Y') }}
+
+                                            </td>
+                                            <td>
+
+                                                {{ $leave->employee->first_name . ' ' . $leave->employee->last_name }}
+
+                                            </td>
+
+                                            <td class="">
+
+
+                                                {{ $leave->reason }}
+
+
+                                            </td>
+                                            <td class="">
+
+                                                <span
+                                                    @if ($leave->status == 'pending') class="badge badge-warning"
+                                                    @elseif($leave->status == 'declined')
+                                                    class="badge badge-danger"
+                                                    @elseif($leave->status == 'approved')
+                                                    class="badge badge-success" @endif>
                                                     {{ ucfirst($leave->status) }}
-                                                </span> 
-                                            </h5>
-                                        </td>
-                                        <td>{{ ucfirst($leave->half_day) }}</td>
-                                        <td>{{ $leave->start_date->format('d-m-Y')}}</td>
-                                        @if($leave->end_date) 
-                                        <td>{{ $leave->end_date->format('d-m-Y') }}</td>
-                                        @else
-                                        <td>Sehari</td>
-                                        @endif
-                                        <td>{{ $leave->description }}</td>
-                                        <td>
-                                            <button 
-                                            class="btn btn-flat btn-info"
-                                            data-toggle="modal"
-                                            data-target="#deleteModalCenter{{ $index + 1 }}"
-                                            >
-                                            Ubah Status
-                                            </button>
-                                        </td>
-                                    </tr>
+                                                </span>
+                                                </h5>
+                                            </td>
+                                            <td class="">
+                                                {{ ucfirst($leave->half_day) }}
+
+                                            </td>
+                                            <td class="">
+
+
+                                                {{ $leave->start_date->format('d-m-Y') }}
+
+                                            </td>
+                                            @if ($leave->end_date)
+                                                <td class="">
+
+
+                                                    {{ $leave->end_date->format('d-m-Y') }}
+
+                                                </td>
+                                            @else
+                                                <td class="">
+
+
+                                                    Single Day
+
+                                                </td>
+                                            @endif
+                                            <td class="">
+
+                                                {{ $leave->description }}
+
+                                            </td>
+                                            <td>
+                                                <a class="mr-4" data-toggle="modal"
+                                                    data-target="#deleteModalCenter{{ $index + 1 }}"title="Ubah Status">
+                                                    <i class="ti ti-more color-muted"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                            @for ($i = 1; $i < $leaves->count()+1; $i++)
+                            @for ($i = 1; $i < $leaves->count() + 1; $i++)
                                 <!-- Modal -->
-                                <div class="modal fade" id="deleteModalCenter{{ $i }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalCenterTitle1{{ $i }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                                <div class="modal fade" id="deleteModalCenter{{ $i }}"
+                                    aria-labelledby="deleteModalCenterTitle1{{ $i }}">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
                                         <div class="modal-content">
-                                            <div class="card card-info">
-                                                <div class="card-header">
-                                                    <h5 style="text-align: center !important">Ubah Status Cuti</h5>
-                                                </div>
-                                                <form 
-                                                    action="{{ route('admin.leaves.update', $leaves->get($i-1)->id) }}"
-                                                    method="POST"
-                                                >
-                                                <div class="card-body">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Ubah Status Cuti</h5>
+                                                <button type="button" class="close"
+                                                    data-dismiss="modal"><span>&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{{ route('admin.leaves.update', $leaves->get($i - 1)->id) }}"
+                                                    method="POST">
+
                                                     @csrf
                                                     @method('PUT')
-                                                        <div class="form-group text-center">
-                                                            <label for="">Pilih Status</label>
-                                                            <select name="status" class="form-control text-center mx-auto" style="width:50%">
-                                                                <option hidden disabled selected value> ---- </option>
-                                                                <option value="pending">Pending</option>
-                                                                <option value="approved">Diterima</option>
-                                                                <option value="declined">Ditolak</option>
-                                                            </select>
-                                                        </div>
-                                                        
-                                                </div>
-                                                <div class="card-footer text-center">
-                                                    <button type="submit" class="btn flat btn-info">Update</button>
-                                                </div>
-                                            </form>
+                                                    <div class="form-group text-center">
+                                                        <label for="">Pilih Status</label>
+                                                        <select name="status" class="form-control">
+                                                            <option hidden disabled selected value> ---- </option>
+                                                            <option value="pending">Pending</option>
+                                                            <option value="approved">Diterima</option>
+                                                            <option value="declined">Ditolak</option>
+                                                        </select>
+                                                    </div>
+
+
+                                                    <div class="modal-footer ">
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- /.modal -->
                             @endfor
-                            @else
-                            <div class="alert alert-info text-center" style="width:50%; margin: 0 auto">
-                                <h4>Data Tidak Ada</h4>
+                        @else
+                            <div class="alert alert-light solid"><strong>Ups!</strong>Tidak ada data
                             </div>
-                            @endif
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-        <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+    </div>
 
-@endsection
 
-@section('extra-js')
-
-<script>
-$(document).ready(function(){
-    $('[data-toggle="popover"]').popover();
-    $('.popover-dismiss').popover({
-        trigger: 'focus'
-    });
-    $('#dataTable').DataTable({
-        responsive:true,
-        autoWidth: false,
-        columnDefs: [
-            { responsivePriority: 1, targets: 0 },
-            { responsivePriority: 2, targets: 1 },
-            { responsivePriority: 200000000000, targets: -1 }
-        ]
-    });
-    $('[data-toggle="tooltip"]').tooltip({
-        trigger: 'hover'
-    });
-});
-</script>
 @endsection

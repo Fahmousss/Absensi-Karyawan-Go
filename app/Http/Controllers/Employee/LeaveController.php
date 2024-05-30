@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Employee;
+
+use App\Employee;
 use App\Http\Controllers\Controller;
 
 use App\Leave;
@@ -12,7 +14,8 @@ use Illuminate\Support\Facades\Gate;
 
 class LeaveController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $employee = Auth::user()->employee;
         $data = [
             'employee' => $employee,
@@ -20,7 +23,8 @@ class LeaveController extends Controller
         ];
         return view('employee.leaves.index')->with($data);
     }
-    public function create() {
+    public function create()
+    {
         $employee = Auth::user()->employee;
         $data = [
             'employee' => $employee
@@ -29,27 +33,28 @@ class LeaveController extends Controller
         return view('employee.leaves.create')->with($data);
     }
 
-    public function store(Request $request, $employee_id) {
-        $red=route('employee.leaves.create');
+    public function store(Request $request, $employee_id)
+    {
+        $red = route('employee.leaves.create');
         $cb = $request->input('date');
         $cb2 = strtotime("+3 Days");
-        $cb3 = date("d",$cb2);
-        $cb4 = date('d',(strtotime ( '-1 day' , strtotime ($cb))));
-            //$start = $request->input('start_date');
-            [$start, $end] = explode(' - ', $request->input('date_range'));
-            $start = Carbon::parse($start);
-            $end = Carbon::parse($end);
-            $str=date('d',strtotime($start));
+        $cb3 = date("d", $cb2);
+        $cb4 = date('d', (strtotime('-1 Day', strtotime($cb))));
+
+        [$start, $end] = explode(' - ', $request->input('date_range'));
+        $start = Carbon::parse($start);
+        $end = Carbon::parse($end);
+        $str = date('d', strtotime($start));
         if($request->input('reason')=="Sakit" && ($cb3<=date('d', strtotime($cb)) || $cb3<=$str || $cb<date('d') || $str<date('d'))) {
-             echo'<script>alert("'.$str.' Izin Sakit hanya bisa diajukan maksimal H+3 sejak tanggal ketidakhadiran");window.location="'.$red.'";</script>';
-        }
-        else if($request->input('reason')=="Cuti" && (date('d', strtotime($cb)>=$cb4 || $str>=$cb4 || $cb>date('d') || $str>date('d')))) {
-             echo'<script>alert("Izin Cuti hanya bisa diajukan maksimal H-1 sejak tanggal ketidakhadiran");window.location="'.$red.'";</script>';
+            echo'<script>alert("'.$str.' Izin Sakit hanya bisa diajukan maksimal H+3 sejak tanggal ketidakhadiran");window.location="'.$red.'";</script>';
+       } else if ($request->input('reason') == "Cuti" && (date('d', strtotime($cb)) >= $cb4 || $str >= $cb4 || $cb > date('d') || $str > date('d'))) {
+            echo '<script>alert("Izin Cuti hanya bisa diajukan maksimal H-1 sejak tanggal ketidakhadiran");window.location="' . $red . '";</script>';
         } else {
+
         $data = [
             'employee' => Auth::user()->employee
         ];
-        if($request->input('multiple-days') == 'yes') {
+        if ($request->input('multiple-days') == 'yes') {
             $this->validate($request, [
                 'reason' => 'required',
                 'description' => 'required',
@@ -61,14 +66,14 @@ class LeaveController extends Controller
                 'description' => 'required'
             ]);
         }
-        
+
         $values = [
             'employee_id' => $employee_id,
             'reason' => $request->input('reason'),
             'description' => $request->input('description'),
             'half_day' => $request->input('half-day')
         ];
-        if($request->input('multiple-days') == 'yes') {
+        if ($request->input('multiple-days') == 'yes') {
             [$start, $end] = explode(' - ', $request->input('date_range'));
             $values['start_date'] = Carbon::parse($start);
             $values['end_date'] = Carbon::parse($end);
@@ -76,19 +81,49 @@ class LeaveController extends Controller
             $values['start_date'] = Carbon::parse($request->input('date'));
         }
         Leave::create($values);
-        $request->session()->flash('success', 'Pengajuan Cuti Anda berhasil, tunggu persetujuan atasan.'); return redirect()->route('employee.leaves.create')->with($data); }
+
+        // $data1 = [
+        //     'last2' => ($request->input('reason')=="Sakit" && ($cb3<=date('d', strtotime($cb)) || $cb3<=$str || $cb<date('d') || $str<date('d'))),
+        //     'last' => ($cb3<=date('d', strtotime($cb)) || $cb3<=$str || $cb<date('d') || $str<date('d')),
+        //     'tes1' => $cb3<=date('d', strtotime($cb)) ,
+        //     'tes2' => $cb3 <= $str,
+        //     'tes3' => $cb < date('d'),
+        //     'tes4' => $str < date('d'),
+        //     'red' => date('d', strtotime($cb)) ,
+        //     'cb' => $cb,
+        //     'cb2' => $cb2,
+        //     'cb3' => $cb3,
+        //     'cb4' => $cb4,
+        //     'start' => $start,
+        //     'end' => $end,
+        //     'str' => $str,
+        //     'values' => $values,
+
+        // ];
+
+        // echo json_encode($data1);
+        $request->session()->flash('success', 'Pengajuan Cuti Anda berhasil, tunggu persetujuan atasan.');
+        return redirect()->route('employee.leaves.create')->with($data);
+        }
     }
 
-    public function edit($leave_id) {
+    public function edit($employee_id, $leave_id)
+    {
+        $employee = Employee::findOrFail($employee_id);
         $leave = Leave::findOrFail($leave_id);
+        $data = [
+            'employee' => $employee,
+            'leave' => $leave
+        ];
         Gate::authorize('employee-leaves-access', $leave);
-        return view('employee.leaves.edit')->with('leave', $leave);
+        return view('employee.leaves.edit')->with($data);
     }
 
-    public function update(Request $request, $leave_id) {
+    public function update(Request $request, $leave_id)
+    {
         $leave = Leave::findOrFail($leave_id);
         Gate::authorize('employee-leaves-access', $leave);
-        if($request->input('multiple-days') == 'yes') {
+        if ($request->input('multiple-days') == 'yes') {
             $this->validate($request, [
                 'reason' => 'required',
                 'description' => 'required',
@@ -104,7 +139,7 @@ class LeaveController extends Controller
         $leave->reason = $request->reason;
         $leave->description = $request->description;
         $leave->half_day = $request->input('half-day');
-        if($request->input('multiple-days') == 'yes') {
+        if ($request->input('multiple-days') == 'yes') {
             [$start, $end] = explode(' - ', $request->input('date_range'));
             $start = Carbon::parse($start);
             $end = Carbon::parse($end);
@@ -120,7 +155,8 @@ class LeaveController extends Controller
         return redirect()->route('employee.leaves.index');
     }
 
-    public function destroy($leave_id) {
+    public function destroy($leave_id)
+    {
         $leave = Leave::findOrFail($leave_id);
         Gate::authorize('employee-leaves-access', $leave);
         $leave->delete();

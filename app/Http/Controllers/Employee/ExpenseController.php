@@ -106,7 +106,7 @@ class ExpenseController extends Controller
         }
         $expense->save();
         $request->session()->flash('success', 'Your expense has been successfully updated!');
-        return redirect()->route('employee.expenses.index');
+        return redirect()->route('employee.expenses.index')->with($data);
     }
 
     public function destroy($expense_id) {
@@ -118,6 +118,6 @@ class ExpenseController extends Controller
         }
         $expense->delete();
         request()->session()->flash('success', 'Expense has been successfully deleted');
-        return redirect()->route('employee.expenses.index');
+        return redirect()->route('employee.expenses.index')->with('employee',Auth::user()->employee);
     }
 }
